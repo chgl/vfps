@@ -31,7 +31,7 @@ jobs:
       github-token: ${{ secrets.GITHUB_TOKEN }}
 
   add-code-coverage:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs:
       - build
     permissions:
@@ -43,6 +43,7 @@ jobs:
       - name: Set up containerd image store
         shell: bash
         run: |
+          [ -f /etc/docker/daemon.json ] || echo "{}" | sudo tee /etc/docker/daemon.json
           jq '. | .+{"features": {"containerd-snapshotter": true}}' /etc/docker/daemon.json > /tmp/docker-daemon-with-containerd.json
           sudo mv /tmp/docker-daemon-with-containerd.json /etc/docker/daemon.json
           cat /etc/docker/daemon.json
@@ -91,7 +92,7 @@ jobs:
 
   test-api:
     name: test api
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs:
       - build
     permissions:
@@ -103,6 +104,7 @@ jobs:
       - name: Set up containerd image store
         shell: bash
         run: |
+          [ -f /etc/docker/daemon.json ] || echo "{}" | sudo tee /etc/docker/daemon.json
           jq '. | .+{"features": {"containerd-snapshotter": true}}' /etc/docker/daemon.json > /tmp/docker-daemon-with-containerd.json
           sudo mv /tmp/docker-daemon-with-containerd.json /etc/docker/daemon.json
           cat /etc/docker/daemon.json
@@ -205,7 +207,7 @@ jobs:
 
   test-migrations:
     name: test migrations
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
     needs:
@@ -216,6 +218,7 @@ jobs:
       - name: Set up containerd image store
         shell: bash
         run: |
+          [ -f /etc/docker/daemon.json ] || echo "{}" | sudo tee /etc/docker/daemon.json
           jq '. | .+{"features": {"containerd-snapshotter": true}}' /etc/docker/daemon.json > /tmp/docker-daemon-with-containerd.json
           sudo mv /tmp/docker-daemon-with-containerd.json /etc/docker/daemon.json
           cat /etc/docker/daemon.json
@@ -252,7 +255,7 @@ jobs:
 
   test-iter8:
     name: iter8 tests
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     if: ${{ github.event_name == 'pull_request' }}
     needs:
       - build
@@ -265,6 +268,7 @@ jobs:
       - name: Set up containerd image store
         shell: bash
         run: |
+          [ -f /etc/docker/daemon.json ] || echo "{}" | sudo tee /etc/docker/daemon.json
           jq '. | .+{"features": {"containerd-snapshotter": true}}' /etc/docker/daemon.json > /tmp/docker-daemon-with-containerd.json
           sudo mv /tmp/docker-daemon-with-containerd.json /etc/docker/daemon.json
           cat /etc/docker/daemon.json
@@ -379,7 +383,7 @@ jobs:
       security-events: write
       actions: read
     with:
-      dotnet-version: "8.0.x"
+      dotnet-version: "9.0.x"
       enable-verify-base-image-signature: false
       enable-validate-gradle-wrapper: false
       codeql-languages: '["csharp"]'
